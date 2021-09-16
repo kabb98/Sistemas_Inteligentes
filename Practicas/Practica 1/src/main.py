@@ -4,6 +4,7 @@ import tkinter.filedialog
 from casilla import *
 from mapa import *
 from pygame.locals import *
+import math
 
 
 from typing import Any, List
@@ -56,12 +57,24 @@ class Nodo(Casilla):
             print("Es valido")
         else:
             print("No es valido")
-        return res 
+        return res
 
+    #Distancias
+    #Distancia de Manhattan
+    def distanciaManhattan(self, other):
+        return abs(other.casilla.fila - self.casilla.fila) + \
+        abs(other.casilla.col - self.casilla.col)
+    
+    #Distancia Euclidea
+    def distanciaEuclidea(self, other):
+        return math.sqrt(((other.casilla.fila - self.casilla.fila)**2 + (other.casilla.col - self.casilla.col)**2 ))
+    
+    #Sobrecarga del operador ==
     def __eq__(self, other):
         """Devuelve true si la fila y columna son iguales"""
         return self.casilla == other.casilla
 
+    #Sobrecarga de la salida estandar
     def __repr__(self):
         return "Coste f: " + str(self.f) + \
             "Coste g: " + str(self.g) + \
