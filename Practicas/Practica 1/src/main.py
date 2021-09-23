@@ -206,7 +206,8 @@ def main():
                         destino = casi
                         camino = inic(mapi)
                         # llamar al A*
-                        coste = aEstrella(mapi, origen, destino, camino)
+                        coste = numeroVecinosValidos(mapi, origen, destino, camino)
+                        #coste = aEstrella(mapi, origen, destino, camino)
                         if coste == -1:
                             tkinter.messagebox.showwarning(
                                 title='Error', message='No existe un camino entre origen y destino')
@@ -262,6 +263,31 @@ def main():
 
 # Devuelve el nodo con el coste f menor
 
+def numeroVecinosValidos(mapa: Mapa, origen: Casilla, destino: Casilla, caminos):
+    vecinos: int = 0
+    min = 10000
+    
+    x = 0
+    y = 0
+
+    for i in range(origen.getFila() - 1, origen.getFila() + 2):
+        for j in range(origen.getCol() - 1, origen.getCol() + 2):
+            if(mapa.getCelda(i, j) != 1 and  not (i == origen.getFila() and j == origen.getCol())):
+                distMan = distanciaManhattan(Casilla(i, j), destino)
+                if(distMan < min):
+                    min = distMan
+                    x = i
+                    y = j
+    
+    vecinos += 1
+    caminos[x][y] = 'X'
+
+    return vecinos
+
+
+def distanciaManhattan(origen: Casilla, destino: Casilla):
+    return abs(destino.getFila() - origen.getFila()) + \
+    abs(destino.getCol() - origen.getCol())
 
 def mejorNodo(lista: List[Nodo]):
     index = 0
