@@ -211,9 +211,8 @@ def numeroVecinosValidos(mapa: Mapa, origen: Casilla, destino: Casilla, caminos)
 def esCorrecto(fila, columna, origen, mapa):
     correcto = False
     if(not (fila == origen.getFila() and columna == origen.getCol())):
-        if(fila > 0 and fila < mapa.getAncho()-1 and columna > 0 and columna < mapa.getAlto()-1):
-            if bueno(mapa, Casilla(fila, columna)):
-                correcto = True
+        if bueno(mapa, Casilla(fila, columna)):
+            correcto = True
     return correcto
 
 def distanciaManhattan(origen: Casilla, destino: Casilla):
