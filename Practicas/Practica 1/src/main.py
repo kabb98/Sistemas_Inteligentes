@@ -1,4 +1,4 @@
-import sys
+
 import pygame
 import tkinter.filedialog
 from casilla import *
@@ -11,29 +11,13 @@ from typing import Any, List
 
 
 class Nodo(Casilla):
-    def __init__(self, casilla: Casilla):
+    def __init__(self, casilla: Casilla, padre = None):
         self.casilla = casilla
         self.f = 0
         self.g = 0
         self.h = 0
         self.coste = 0
-        self.padre = None
-
-    def vecinos(self, mapa: Mapa) -> List:
-        vecinos = []
-        for i in range(self.casilla.getFila() - 1, self.casilla.getFila() + 2):
-            for j in range(self.casilla.getCol() - 1, self.casilla.getCol() + 2):
-                casilla = Casilla(i, j)
-                nuevoNodo = Nodo(casilla)
-                nuevoNodo.padre = self
-                if(self.esValido(nuevoNodo, mapa)):
-                    print("ENTRA!!!!!!!!!!!")
-                    vecinos.append(nuevoNodo)
-                    for vec in vecinos:
-                        print(vec)
-
-        return vecinos
-
+    
     def getF(self):
         return self.f
 
@@ -49,15 +33,7 @@ class Nodo(Casilla):
     def __sub__(self, other) -> Casilla:
         return Casilla(self.casilla.fila - other.casilla.fila, self.casilla.col - other.casilla.col)
 
-    def esValido(self, current, mapa: Mapa):
-        celda = mapa.getCelda(current.casilla.getCol(), current.casilla.getFila())
-        print("Celda: " + str(celda))
-        res = self != current and celda != 1
-        if(res):
-            print("Es valido")
-        else:
-            print("No es valido")
-        return res
+    
 
     #Distancias
     #Distancia de Manhattan
@@ -264,11 +240,12 @@ def main():
 # Devuelve el nodo con el coste f menor
 
 def numeroVecinosValidos(mapa: Mapa, origen: Casilla, destino: Casilla, caminos):
-    vecinos: int = 0
+    vecinosNum: int = 0
     min = 10000
     
     x = 0
     y = 0
+<<<<<<< HEAD
 
     for i in range(origen.getFila() - 1, origen.getFila() + 2):
         for j in range(origen.getCol() - 1, origen.getCol() + 2):
@@ -278,23 +255,40 @@ def numeroVecinosValidos(mapa: Mapa, origen: Casilla, destino: Casilla, caminos)
                     min = distMan
                     x = i
                     y = j
+=======
+>>>>>>> d5d30a078d2601e74e6b218a6fdb97621e44160e
     
-    vecinos += 1
+    for vecino in vecinos(Nodo(origen), mapa):
+        dst = distanciaManhattan(vecino.casilla, destino)
+        if(dst < min):
+            min = dst
+            x = vecino.casilla.getFila()
+            y = vecino.casilla.getCol()
+    vecinosNum += 1
     caminos[x][y] = 'X'
 
-    return vecinos
+    return vecinosNum
 
+def esCorrecto(fila, columna, origen, mapa):
+    correcto = False
+    if(not (fila == origen.getFila() and columna == origen.getCol())):
+        if(fila > 0 and fila < mapa.getAncho()-1 and columna > 0 and columna < mapa.getAlto()-1):
+            if(mapa.getCelda(fila, columna) == 0):
+                correcto = True
+    return correcto
 
 def distanciaManhattan(origen: Casilla, destino: Casilla):
     return abs(destino.getFila() - origen.getFila()) + \
     abs(destino.getCol() - origen.getCol())
 
-def mejorNodo(lista: List[Nodo]):
-    index = 0
-    for i in range(1, len(lista)):
-        if lista[i].getF() < lista[index].getF():
-            index = i
-    return lista[index]
+def vecinos(nodo: Nodo, mapa: Mapa) -> List:
+    vecinos = []
+    for i in range(nodo.casilla.getFila() - 1, nodo.casilla.getFila() + 2):
+        for j in range(nodo.casilla.getCol() - 1, nodo.casilla.getCol() + 2):
+            if esCorrecto(i, j, nodo.casilla, mapa):
+                vecinos.append(Nodo(Casilla(i, j), nodo))
+
+    return vecinos
 
 
 def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos):
