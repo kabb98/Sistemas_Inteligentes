@@ -272,7 +272,7 @@ def numeroVecinosValidos(mapa: Mapa, origen: Casilla, destino: Casilla, caminos)
 
     for i in range(origen.getFila() - 1, origen.getFila() + 2):
         for j in range(origen.getCol() - 1, origen.getCol() + 2):
-            if(mapa.getCelda(i, j) != 1 and  not (i == origen.getFila() and j == origen.getCol())):
+            if(bueno(mapa, Casilla(i, j)) and  not (i == origen.getFila() and j == origen.getCol())):
                 distMan = distanciaManhattan(Casilla(i, j), destino)
                 if(distMan < min):
                     min = distMan
