@@ -9,13 +9,13 @@ class Nodo(Casilla):
         self.coste = 0
         self.padre = padre
     
-    def getF(self):
+    def getF(self) -> float:
         return self.f
 
-    def getG(self):
+    def getG(self) -> float:
         return self.g
 
-    def getH(self):
+    def getH(self) -> float:
         return self.h
     
     def getPadre(self):
@@ -36,13 +36,23 @@ class Nodo(Casilla):
     def distanciaEuclidea(self, other):
         return math.sqrt(((other.casilla.fila - self.casilla.fila)**2 + (other.casilla.col - self.casilla.col)**2 ))
     
+    def distanciaDiagonal(self, other):
+        dx = abs(other.casilla.fila - self.casilla.fila)
+        dy = abs(other.casilla.col - self.casilla.col)
+
+        mini = min(dx, dy)
+        maxi = max(dx, dy)
+        diagonalStep = mini
+        straightSteps = maxi - mini
+
+        return math.sqrt(2) * diagonalStep + straightSteps
+
     #Sobrecarga del operador ==
     def __eq__(self, other):
-        """Devuelve true si la fila y columna son iguales"""
         return self.casilla == other.casilla
 
     #Sobrecarga de la salida estandar
     def __repr__(self):
         return "Coste f: " + str(self.f) + \
-            "Coste g: " + str(self.g) + \
-            "Coste h: " + str(self.h)
+            " Coste g: " + str(self.g) + \
+            " Coste h: " + str(self.h)

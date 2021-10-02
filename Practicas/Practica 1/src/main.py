@@ -188,34 +188,14 @@ def main():
 
     pygame.quit()
 
-# Devuelve el nodo con el coste f menor
-
-def numeroVecinosValidos(mapa: Mapa, origen: Casilla, destino: Casilla, caminos):
-    vecinosNum: int = 0
-    min = 10000
-    
-    x = 0
-    y = 0
-    
-    for vecino in vecinos(Nodo(origen), mapa):
-        dst = distanciaManhattan(vecino.casilla, destino)
-        if(dst < min):
-            min = dst
-            x = vecino.casilla.getFila()
-            y = vecino.casilla.getCol()
-    vecinosNum += 1
-    caminos[x][y] = 'X'
-
-    return vecinosNum
-
-def esCorrecto(fila, columna, origen, mapa):
-    correcto = False
+def esCorrecto(fila, columna, origen, mapa) -> bool:
+    correcto: bool = False
     if(not (fila == origen.getFila() and columna == origen.getCol())):
         if bueno(mapa, Casilla(fila, columna)):
             correcto = True
     return correcto
 
-def distanciaManhattan(origen: Casilla, destino: Casilla):
+def distanciaManhattan(origen: Casilla, destino: Casilla) -> float:
     return abs(destino.getFila() - origen.getFila()) + \
     abs(destino.getCol() - origen.getCol())
 
@@ -228,27 +208,49 @@ def vecinos(nodo: Nodo, mapa: Mapa) -> List:
 
     return vecinos
 
+def reconstruyeCamino(best: Nodo, caminos):
+    coste = best.getF()
+    
+    while(best.getPadre()):
+        best = best.getPadre()
+        caminos[best.casilla.getFila()][best.casilla.getCol()] = 'X'
+    return coste
 
-def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos):
-    coste_total = -1
+def iniciaEstados(mapi):
+    estados = []
+    for i in range(mapi.alto):
+        estados.append([])
+        for j in range(mapi.ancho):
+            estados[i].append(-1)
+    return estados
+
+def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
+    coste_total: float = -1
     listaFrontera: List[Nodo] = []
     listaInterior: List[Nodo] = []
+
+    estados = iniciaEstados(mapi)
 
     nodoInicial: Nodo = Nodo(origen)
     nodoMeta: Nodo = Nodo(destino)
 
+    nodoInicial.h = nodoInicial.distanciaManhattan(nodoMeta)
     listaFrontera.append(nodoInicial)
 
+    orden = 0
     while listaFrontera:
         #Cogemos el mejor nodo de la lista Frontera       
         best = min(listaFrontera, key=lambda nodo: nodo.f)
+        estados[best.casilla.fila][best.casilla.col] = orden
+        orden += 1
 
         """Hemos llegado a la meta"""
         if(best == nodoMeta):
-            coste_total = best.getF()
-            while(best.getPadre()):
-                best = best.getPadre()
-                caminos[best.casilla.getFila()][best.casilla.getCol()] = 'X'
+            coste_total = reconstruyeCamino(best, caminos)
+            for i in range(mapi.alto):
+                for j in range(mapi.ancho):
+                    print(estados[i][j], end = " ")
+                print()
             break
         else:
             """Expandimos nodo"""
@@ -261,7 +263,7 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos):
                     g_m = best.g + costeCelda(hijo, best)
                     if hijo not in listaFrontera:
                         hijo.g = g_m
-                        hijo.h = 0
+                        hijo.h = hijo.distanciaManhattan(nodoMeta)
                         hijo.f = hijo.g + hijo.h
                         hijo.padre = best
                         listaFrontera.append(hijo)
@@ -269,25 +271,21 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos):
                         if g_m < hijo.g:
                             hijo.padre = best
                             hijo.g = g_m
-                            hijo.h = 0
+                            hijo.h = hijo.distanciaManhattan(nodoMeta)
                             hijo.f = hijo.g + hijo.h
     return coste_total
 
 def costeCelda(vecino: Nodo, best: Nodo) -> float:
     coste: float = 0.0
-    dif: Casilla = vecino - best
+    hijo: Casilla = vecino - best
     
     verticales = [Casilla(-1,0), Casilla(0,-1), Casilla(0,1), Casilla(1,0)]
     diagonales = [Casilla(-1, -1), Casilla(-1, 1), Casilla(1, -1), Casilla(1,1)]
-    if dif in verticales:
+    if hijo in verticales:
         coste = 1.0
-    elif dif in diagonales:
+    elif hijo in diagonales:
         coste = 1.5
-
-    if(coste == 0):
-        print("QUE COÑO HA PASADO")
     return coste
-
 
 # ---------------------------------------------------------------------
 if __name__ == "__main__":
