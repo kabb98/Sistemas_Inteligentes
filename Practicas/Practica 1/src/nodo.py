@@ -7,6 +7,7 @@ class Nodo(Casilla):
         self.g = 0
         self.h = 0
         self.coste = 0
+        self.padre = padre
     
     def getF(self):
         return self.f

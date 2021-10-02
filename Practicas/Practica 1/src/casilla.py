@@ -8,6 +8,9 @@ class Casilla():
     
     def getCol (self):
         return self.col
+    
+    def __eq__ (self, other):
+        return self.fila == other.fila and self.col == other.col
         
     def __repr__ (self):
         return "X: " + str(self.fila) + " Y: " + str(self.col)
