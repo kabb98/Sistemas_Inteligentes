@@ -202,10 +202,6 @@ def esCorrecto(fila, columna, origen, mapa) -> bool:
             correcto = True
     return correcto
 
-def distanciaManhattan(origen: Casilla, destino: Casilla) -> float:
-    return abs(destino.getFila() - origen.getFila()) + \
-    abs(destino.getCol() - origen.getCol())
-
 def vecinos(nodo: Nodo, mapa: Mapa) -> List:
     vecinos: List = []
     for i in range(nodo.casilla.getFila() - 1, nodo.casilla.getFila() + 2):
@@ -255,6 +251,7 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
     while listaFrontera:
         #Cogemos el mejor nodo de la lista Frontera       
         best = min(listaFrontera, key=lambda nodo: nodo.f)
+
         estados[best.casilla.fila][best.casilla.col] = orden
         orden += 1
 
@@ -283,6 +280,17 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
                     hijo.h = hijo.distanciaManhattan(nodoMeta)
                     hijo.f = hijo.g + hijo.h
     return coste_total
+
+def addToList(listaFrontera: List[Nodo], best: Nodo) -> None:
+    if len(listaFrontera) == 0:
+        listaFrontera.append(best)
+    else:
+        for i, nodo in enumerate(listaFrontera):
+            if(best.f < nodo.f):
+                listaFrontera.insert(i, best)
+                break
+            elif len(listaFrontera) - 1 == i:
+                listaFrontera.append(best)
 
 def costeCelda(vecino: Nodo, best: Nodo) -> float:
     coste: float = 0.0
