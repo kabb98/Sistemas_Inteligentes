@@ -2,10 +2,12 @@
 import pygame
 import tkinter.filedialog
 from pygame.locals import *
+from typing import List
+import time
 from casilla import *
 from mapa import *
 from nodo import *
-from typing import List
+
 
 MARGEN = 5
 MARGEN_INFERIOR = 60
@@ -103,7 +105,7 @@ def main():
     coste = -1
     running = True
     primeraVez = True
-
+    tiempoTotal = 0
     while running:
         # procesamiento de eventos
         for event in pygame.event.get():
@@ -134,7 +136,11 @@ def main():
                         camino = inic(mapi)
                         # llamar al A*
                         #coste = numeroVecinosValidos(mapi, origen, destino, camino)
+                        start = time.time()
                         coste = aEstrella(mapi, origen, destino, camino)
+                        end = time.time()
+                        tiempoTotal = end - start
+                        print("El algortimo A* ha tardado", tiempoTotal)
                         if coste == -1:
                             tkinter.messagebox.showwarning(
                                 title='Error', message='No existe un camino entre origen y destino')
@@ -190,8 +196,9 @@ def main():
 
 def esCorrecto(fila, columna, origen, mapa) -> bool:
     correcto: bool = False
-    if(not (fila == origen.getFila() and columna == origen.getCol())):
-        if bueno(mapa, Casilla(fila, columna)):
+    
+    if(fila != origen.getFila() or columna != origen.getCol()) and \
+        bueno(mapa, Casilla(fila, columna)):
             correcto = True
     return correcto
 
@@ -224,6 +231,13 @@ def iniciaEstados(mapi):
             estados[i].append(-1)
     return estados
 
+def camino_expandido(camino, mapi):
+    for i in range(mapi.alto):
+        for j in range(mapi.ancho):
+            print(camino[i][j], end = " ")
+        print()
+    
+
 def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
     coste_total: float = -1
     listaFrontera: List[Nodo] = []
@@ -234,7 +248,7 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
     nodoInicial: Nodo = Nodo(origen)
     nodoMeta: Nodo = Nodo(destino)
 
-    nodoInicial.h = nodoInicial.distanciaManhattan(nodoMeta)
+    #nodoInicial.h = nodoInicial.distanciaDiagonal(nodoMeta)
     listaFrontera.append(nodoInicial)
 
     orden = 0
@@ -247,43 +261,42 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
         """Hemos llegado a la meta"""
         if(best == nodoMeta):
             coste_total = reconstruyeCamino(best, caminos)
-            for i in range(mapi.alto):
-                for j in range(mapi.ancho):
-                    print(estados[i][j], end = " ")
-                print()
+            camino_expandido(estados, mapi)
             break
-        else:
-            """Expandimos nodo"""
-            listaFrontera.remove(best)
-            listaInterior.append(best)
+        
+        """Expandimos nodo"""
+        listaInterior.append(best)
+        listaFrontera.remove(best)
 
-            """Vemos los hijos validos"""
-            for hijo in vecinos(best, mapi):
-                if hijo not in listaInterior:
-                    g_m = best.g + costeCelda(hijo, best)
-                    if hijo not in listaFrontera:
-                        hijo.g = g_m
-                        hijo.h = hijo.distanciaManhattan(nodoMeta)
-                        hijo.f = hijo.g + hijo.h
-                        hijo.padre = best
-                        listaFrontera.append(hijo)
-                    else:
-                        if g_m < hijo.g:
-                            hijo.padre = best
-                            hijo.g = g_m
-                            hijo.h = hijo.distanciaManhattan(nodoMeta)
-                            hijo.f = hijo.g + hijo.h
+        """Vemos los hijos validos"""
+        for hijo in vecinos(best, mapi):
+            if hijo not in listaInterior:
+                g_m = best.g + costeCelda(hijo, best)
+                if hijo not in listaFrontera:
+                    hijo.g = g_m
+                    hijo.h = hijo.distanciaManhattan(nodoMeta)
+                    hijo.f = hijo.g + hijo.h
+                    listaFrontera.append(hijo)
+                elif g_m < hijo.g:
+                    hijo.padre = best
+                    hijo.g = g_m
+                    hijo.h = hijo.distanciaManhattan(nodoMeta)
+                    hijo.f = hijo.g + hijo.h
     return coste_total
 
 def costeCelda(vecino: Nodo, best: Nodo) -> float:
     coste: float = 0.0
     hijo: Casilla = vecino - best
     
-    verticales = [Casilla(-1,0), Casilla(0,-1), Casilla(0,1), Casilla(1,0)]
-    diagonales = [Casilla(-1, -1), Casilla(-1, 1), Casilla(1, -1), Casilla(1,1)]
+    #verticales = [Casilla(-1,0), Casilla(0,-1), Casilla(0,1), Casilla(1,0)]
+    #diagonales = [Casilla(-1,-1), Casilla(-1,1), Casilla(1,-1), Casilla(1,1)]
+    
+    verticales = [Casilla(1,0), Casilla(0,1)]
+    diagonal = Casilla(1,1)
+      
     if hijo in verticales:
         coste = 1.0
-    elif hijo in diagonales:
+    elif hijo == diagonal:
         coste = 1.5
     return coste
 

@@ -22,15 +22,15 @@ class Nodo(Casilla):
         return self.padre
 
     def __sub__(self, other) -> Casilla:
-        return Casilla(self.casilla.fila - other.casilla.fila, self.casilla.col - other.casilla.col)
+        return Casilla(abs(self.casilla.fila - other.casilla.fila), abs(self.casilla.col - other.casilla.col))
 
     
 
     #Distancias
     #Distancia de Manhattan
     def distanciaManhattan(self, other):
-        return abs(other.casilla.fila - self.casilla.fila) + \
-        abs(other.casilla.col - self.casilla.col)
+        return abs(self.casilla.fila - other.casilla.fila) + \
+        abs(self.casilla.col - other.casilla.col)
     
     #Distancia Euclidea
     def distanciaEuclidea(self, other):
