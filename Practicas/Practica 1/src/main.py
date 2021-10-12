@@ -215,8 +215,8 @@ def reconstruyeCamino(best: Nodo, caminos):
     coste = best.getF()
     
     while(best.getPadre()):
-        best = best.getPadre()
         caminos[best.casilla.getFila()][best.casilla.getCol()] = 'X'
+        best = best.getPadre()
     return coste
 
 def iniciaEstados(mapi):
@@ -232,7 +232,15 @@ def camino_expandido(camino, mapi):
         for j in range(mapi.ancho):
             print(camino[i][j], end = " ")
         print()
-    
+
+def mejorNodo(listaFrontera):
+    pos = 0
+
+    for i in range(1, len(listaFrontera)):
+        if listaFrontera[i].getF() < listaFrontera[pos].getF():
+            pos = i
+    return listaFrontera[pos]
+
 
 def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
     coste_total: float = -1
@@ -250,7 +258,8 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
     orden = 0
     while listaFrontera:
         #Cogemos el mejor nodo de la lista Frontera       
-        best = min(listaFrontera, key=lambda nodo: nodo.f)
+        best =  mejorNodo(listaFrontera)
+        # listaFrontera[0] #min(listaFrontera, key=lambda nodo: nodo.f)
 
         estados[best.casilla.fila][best.casilla.col] = orden
         orden += 1
@@ -274,6 +283,7 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
                     hijo.h = hijo.distanciaManhattan(nodoMeta)
                     hijo.f = hijo.g + hijo.h
                     listaFrontera.append(hijo)
+                    #listaFrontera.sort(key=lambda nodo: nodo.f)
                 elif g_m < hijo.g:
                     hijo.padre = best
                     hijo.g = g_m
