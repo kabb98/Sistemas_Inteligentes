@@ -5,9 +5,7 @@ from casilla import *
 class Estado():
     def __init__(self, casilla: Casilla, padre = None):
         self.casilla = casilla
-        self.f = 0
-        self.g = 0
-        self.h = 0
+        self.f = self.g = self.h = 0
         self.parent = padre
 
     def getF(self):
