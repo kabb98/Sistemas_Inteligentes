@@ -53,6 +53,4 @@ class Nodo(Casilla):
 
     #Sobrecarga de la salida estandar
     def __repr__(self):
-        return "Coste f: " + str(self.f) + \
-            " Coste g: " + str(self.g) + \
-            " Coste h: " + str(self.h)
+        return "(" + str(self.casilla.getFila()) + "," + str(self.casilla.getCol()) + ")"
