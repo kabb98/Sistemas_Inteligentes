@@ -237,7 +237,7 @@ def mejorNodo(listaFrontera):
     pos = 0
 
     for i in range(1, len(listaFrontera)):
-        if listaFrontera[i].getF() < listaFrontera[pos].getF():
+        if listaFrontera[i].getF() <= listaFrontera[pos].getF():
             pos = i
     return listaFrontera[pos]
 
