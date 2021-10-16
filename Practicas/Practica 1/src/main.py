@@ -241,7 +241,20 @@ def mejorNodo(listaFrontera):
             pos = i
     return listaFrontera[pos]
 
+def correctInsertion(lista: List[Nodo], hijo: Nodo):
+    for i in lista:
+        if hijo.f <= i.f:
+            return lista.index(i)
 
+
+def indiceCorrecto(list, node: Nodo):
+    index = -1
+    for i in range(list):
+        if list[i].f > node.f:
+            index = i
+            break      
+    return index
+    
 def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
     coste_total: float = -1
     listaFrontera: List[Nodo] = []
@@ -252,15 +265,12 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
     nodoInicial: Nodo = Nodo(origen)
     nodoMeta: Nodo = Nodo(destino)
 
-    #nodoInicial.h = nodoInicial.distanciaDiagonal(nodoMeta)
     listaFrontera.append(nodoInicial)
 
     orden = 0
     while listaFrontera:
-        #Cogemos el mejor nodo de la lista Frontera       
-        best =  mejorNodo(listaFrontera)
-        # listaFrontera[0] #min(listaFrontera, key=lambda nodo: nodo.f)
-
+        #Cogemos el mejor nodo de la lista Frontera
+        best: Nodo = listaFrontera[0] #min(listaFrontera, key=lambda nodo: nodo.f)
         estados[best.casilla.fila][best.casilla.col] = orden
         orden += 1
 
@@ -282,25 +292,14 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
                     hijo.g = g_m
                     hijo.h = hijo.distanciaManhattan(nodoMeta)
                     hijo.f = hijo.g + hijo.h
-                    listaFrontera.append(hijo)
-                    #listaFrontera.sort(key=lambda nodo: nodo.f)
+                    listaFrontera.sort(key=lambda nodo: nodo.f)
                 elif g_m < hijo.g:
                     hijo.padre = best
                     hijo.g = g_m
                     hijo.h = hijo.distanciaManhattan(nodoMeta)
                     hijo.f = hijo.g + hijo.h
+                    
     return coste_total
-
-def addToList(listaFrontera: List[Nodo], best: Nodo) -> None:
-    if len(listaFrontera) == 0:
-        listaFrontera.append(best)
-    else:
-        for i, nodo in enumerate(listaFrontera):
-            if(best.f < nodo.f):
-                listaFrontera.insert(i, best)
-                break
-            elif len(listaFrontera) - 1 == i:
-                listaFrontera.append(best)
 
 def costeCelda(vecino: Nodo, best: Nodo) -> float:
     coste: float = 0.0
