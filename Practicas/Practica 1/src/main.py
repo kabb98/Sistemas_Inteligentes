@@ -237,6 +237,7 @@ def mejorNodo(listaFrontera):
     pos = 0
 
     for i in range(1, len(listaFrontera)):
+        print("pos -> ", listaFrontera[i], " f -> ", listaFrontera[i].f)
         if listaFrontera[i].getF() <= listaFrontera[pos].getF():
             pos = i
     return listaFrontera[pos]
@@ -250,7 +251,7 @@ def correctInsertion(lista: List[Nodo], hijo: Nodo):
 def indiceCorrecto(list, node: Nodo):
     index = -1
     for i in range(list):
-        if list[i].f > node.f:
+        if list[i].f >= node.f:
             index = i
             break      
     return index
@@ -267,10 +268,14 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
 
     listaFrontera.append(nodoInicial)
 
+
     orden = 0
     while listaFrontera:
         #Cogemos el mejor nodo de la lista Frontera
-        best: Nodo = listaFrontera[0] #min(listaFrontera, key=lambda nodo: nodo.f)
+        best = mejorNodo(listaFrontera)
+        print("pos -> ", best, " f -> ", best.f)
+        #best: Nodo = listaFrontera[0] #min(listaFrontera, key=lambda nodo: nodo.f)
+        print("h -> ", best.h)
         estados[best.casilla.fila][best.casilla.col] = orden
         orden += 1
 
@@ -286,12 +291,14 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
 
         """Vemos los hijos validos"""
         for hijo in vecinos(best, mapi):
+            g_m = best.g + costeCelda(hijo, best)
             if hijo not in listaInterior:
-                g_m = best.g + costeCelda(hijo, best)
                 if hijo not in listaFrontera:
+                    hijo.padre = best
                     hijo.g = g_m
                     hijo.h = hijo.distanciaManhattan(nodoMeta)
                     hijo.f = hijo.g + hijo.h
+                    listaFrontera.append(hijo)
                     listaFrontera.sort(key=lambda nodo: nodo.f)
                 elif g_m < hijo.g:
                     hijo.padre = best

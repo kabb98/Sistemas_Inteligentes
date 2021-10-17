@@ -47,6 +47,11 @@ class Nodo(Casilla):
 
         return math.sqrt(2) * diagonalStep + straightSteps
 
+    def distanciaChevychev(self, other):
+        x = (self.casilla.fila - other.casilla.fila)
+        y = (self.casilla.col - other.casilla.col)
+        return max(x, y)
+
     #Sobrecarga del operador ==
     def __eq__(self, other):
         return self.casilla == other.casilla
