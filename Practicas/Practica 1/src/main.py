@@ -273,9 +273,11 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
     while listaFrontera:
         #Cogemos el mejor nodo de la lista Frontera
         best = mejorNodo(listaFrontera)
-        print("pos -> ", best, " f -> ", best.f)
+        #print("pos -> ", best, " f -> ", best.f)
         #best: Nodo = listaFrontera[0] #min(listaFrontera, key=lambda nodo: nodo.f)
-        print("h -> ", best.h)
+        #print("h -> ", best.h)
+        
+        
         estados[best.casilla.fila][best.casilla.col] = orden
         orden += 1
 
@@ -296,14 +298,14 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
                 if hijo not in listaFrontera:
                     hijo.padre = best
                     hijo.g = g_m
-                    hijo.h = hijo.distanciaManhattan(nodoMeta)
+                    hijo.h = hijo.cosine(nodoMeta)#hijo.distanciaDiagonal(nodoMeta)
                     hijo.f = hijo.g + hijo.h
                     listaFrontera.append(hijo)
                     listaFrontera.sort(key=lambda nodo: nodo.f)
                 elif g_m < hijo.g:
                     hijo.padre = best
                     hijo.g = g_m
-                    hijo.h = hijo.distanciaManhattan(nodoMeta)
+                    hijo.h = hijo.cosine(nodoMeta)#hijo.distanciaDiagonal(nodoMeta)
                     hijo.f = hijo.g + hijo.h
                     
     return coste_total
