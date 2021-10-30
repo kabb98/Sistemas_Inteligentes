@@ -1,6 +1,12 @@
 from casilla import *
 import math
+<<<<<<< HEAD
 class Nodo():
+=======
+import numpy as np
+
+class Nodo(Casilla):
+>>>>>>> 73574befbed29d5a748eb823e42f24ddeebaab15
     def __init__(self, casilla: Casilla, padre = None):
         self.casilla = casilla
         self.f = 0
@@ -51,6 +57,18 @@ class Nodo():
         x = abs(self.casilla.fila - other.casilla.fila)
         y = abs(self.casilla.col - other.casilla.col)
         return max(x, y)
+
+
+    def cosine(self, other):
+        x = []
+        x.append(self.casilla.fila)
+        x.append(other.casilla.fila)
+
+        y = []
+        y.append(self.casilla.col)
+        y.append(self.casilla.col)
+
+        return np.dot(x, y) / (np.sqrt(np.dot(x, x) * np.dot(y,y)))
 
     #Sobrecarga del operador ==
     def __eq__(self, other):

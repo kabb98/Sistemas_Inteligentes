@@ -258,9 +258,19 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
 
     orden = 0
     while listaFrontera:
+<<<<<<< HEAD
         # Cogemos el mejor nodo de la lista Frontera
         best: Nodo = listaFrontera[0]
         printList(listaFrontera)
+=======
+        #Cogemos el mejor nodo de la lista Frontera
+        best = mejorNodo(listaFrontera)
+        #print("pos -> ", best, " f -> ", best.f)
+        #best: Nodo = listaFrontera[0] #min(listaFrontera, key=lambda nodo: nodo.f)
+        #print("h -> ", best.h)
+        
+        
+>>>>>>> 73574befbed29d5a748eb823e42f24ddeebaab15
         estados[best.casilla.fila][best.casilla.col] = orden
         orden += 1
 
@@ -274,6 +284,7 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
 
             print("Nodos explorados: ", len(listaInterior))
             break
+<<<<<<< HEAD
         else:
             """Expandimos nodo"""
             listaInterior.append(best)
@@ -305,6 +316,30 @@ def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
                         hijo.f = hijo.g + hijo.h
                         listaFrontera.append(hijo)
 
+=======
+        
+        """Expandimos nodo"""
+        listaInterior.append(best)
+        listaFrontera.remove(best)
+
+        """Vemos los hijos validos"""
+        for hijo in vecinos(best, mapi):
+            g_m = best.g + costeCelda(hijo, best)
+            if hijo not in listaInterior:
+                if hijo not in listaFrontera:
+                    hijo.padre = best
+                    hijo.g = g_m
+                    hijo.h = hijo.cosine(nodoMeta)#hijo.distanciaDiagonal(nodoMeta)
+                    hijo.f = hijo.g + hijo.h
+                    listaFrontera.append(hijo)
+                    listaFrontera.sort(key=lambda nodo: nodo.f)
+                elif g_m < hijo.g:
+                    hijo.padre = best
+                    hijo.g = g_m
+                    hijo.h = hijo.cosine(nodoMeta)#hijo.distanciaDiagonal(nodoMeta)
+                    hijo.f = hijo.g + hijo.h
+                    
+>>>>>>> 73574befbed29d5a748eb823e42f24ddeebaab15
     return coste_total
 
 
