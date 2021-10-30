@@ -1,7 +1,7 @@
 #Devuelve el estado con el f menor
 from estado import *
 from casilla import *
-
+import time
 
 def mejorEstado(listaFrontera):
     pos = 0
@@ -11,20 +11,71 @@ def mejorEstado(listaFrontera):
             pos = i
     return listaFrontera[pos]
 
+def createExpPath(mapi):
+    cam = []
+    for i in range(mapi.alto):
+        cam.append([])
+        for j in range(mapi.ancho):
+            cam[i].append(-1)
+    
+    return cam
+
+def muestraCaminoExpandido(cam, mapi):
+    print("Camino Expandido")
+    for i in range(mapi.alto):
+        for j in range(mapi.ancho):
+            print(cam[i][j], end = " ")
+        print()
+
+
 def aEstrella(mapi, origen, destino, camino):
+    #Comenzamos a contar el tiempo
+    inicio = time.time_ns()
+
+    #Estructuras de datos
     listaFrontera = []
     listaInterior = []
+    expandedPath = createExpPath(mapi)
+    
+    #Nodos de los que sabemos su posicion
     estadoInicial = Estado(origen)
     estadoFinal = Estado(destino)
-
+    
+    #Añadimos el estado inicial a la lista frontera
     listaFrontera.append(estadoInicial)
 
-    while len(listaFrontera) > 0:
-        n = mejorEstado(listaFrontera)
+    #Guardamos el orden para el camino expadido
+    posOrden = 0
 
+    #Itera mientra haya nodos
+    while len(listaFrontera) > 0:
+        #Sacamos el mejor nodo de la lista frontera
+        n = mejorEstado(listaFrontera)
+        
+        fil = n.getCasilla().getFila()
+        col = n.getCasilla().getCol()
+        expandedPath[fil][col] = posOrden
+        posOrden += 1
+
+        #Si n es meta, acabamos
         if n == estadoFinal:
+            #Fin tiempo ejecución
+            fin = time.time_ns()
+
+            #Guardamos la f del mejor nodo
             res = n.getF()
-            caminoReconstruido(n, camino)
+            
+            #Estadisticas
+            print("Coste: ", res)
+            print("Nodos explorados: ", len(listaInterior))
+            #g = float("{:.5f}".format(fin - inicio))
+            print("Tiempo de ejecución: ", fin - inicio)
+
+            #Caminos
+            muestraCaminoReconstruido(n, camino)
+            muestraCaminoExpandido(expandedPath, mapi)
+            print
+
             return res
         else:
             listaInterior.append(n)
@@ -60,13 +111,19 @@ def costeDesplazamiento(n, m):
         return 1.5
 
 #Reconstrucción de camino
-def caminoReconstruido(n, caminos):
+def muestraCaminoReconstruido(n, camino):
     while n.getPadre() is not None:
-        caminos[n.getCasilla().getFila()][n.getCasilla().getCol()] = 'C'
+        camino[n.getCasilla().getFila()][n.getCasilla().getCol()] = 'X'
         n = n.getPadre()
+    
+    print("Camino")
+    for i in range(len(camino)):
+        for j in range(len(camino[i])):
+            print(camino[i][j], end=" ")
+        print()
 
 #Saca los vecinos adyacentes a n que sean correctos
-def vecinosAdyacentes(mapi, n):
+def vecinosAdyacentes(mapa, n):
     adyacentes = []
     #Posicion del nodo actual
     x = n.getCasilla().getFila()
@@ -75,14 +132,25 @@ def vecinosAdyacentes(mapi, n):
     #Recorremos los vecinos y miramos si son correctos, y se añade a la lista
     for i in range(x-1, x+2):
         for j in range(y-1, y+2):
-            if mapi.getCelda(i,j) == 0 and not (i == x and j == y):
+            if mapa.getCelda(i,j) == 0 and not (i == x and j == y):
                 pos = Casilla(i, j)
                 adyacentes.append(Estado(pos))
     return adyacentes
-
 
 #Heuristica Manhattan
 def manhattanHeuristic(actual, meta):
     res = abs(meta.getCasilla().getFila() - actual.getCasilla().getFila()) + \
         abs(meta.getCasilla().getCol() - actual.getCasilla().getCol())
     return res
+
+#Heuristica Euclidea
+def euclideaHeuristic(actual, meta):
+    pass
+
+#Heuristica Chevyshev
+def chevyshevHeuristic(actual, meta):
+    pass
+
+#Heuristica Cuadratica
+def cuadraticHeuritic(actual, meta):
+    pass
