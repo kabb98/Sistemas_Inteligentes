@@ -1,6 +1,6 @@
 from casilla import *
 import math
-class Nodo(Casilla):
+class Nodo():
     def __init__(self, casilla: Casilla, padre = None):
         self.casilla = casilla
         self.f = 0
@@ -48,8 +48,8 @@ class Nodo(Casilla):
         return math.sqrt(2) * diagonalStep + straightSteps
 
     def distanciaChevychev(self, other):
-        x = (self.casilla.fila - other.casilla.fila)
-        y = (self.casilla.col - other.casilla.col)
+        x = abs(self.casilla.fila - other.casilla.fila)
+        y = abs(self.casilla.col - other.casilla.col)
         return max(x, y)
 
     #Sobrecarga del operador ==

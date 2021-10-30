@@ -140,7 +140,7 @@ def main():
                         coste = aEstrella(mapi, origen, destino, camino)
                         end = time.time()
                         tiempoTotal = end - start
-                        print("El algortimo A* ha tardado", tiempoTotal)
+                        print("Tiempo empleado -> ", tiempoTotal, "segundos")
                         if coste == -1:
                             tkinter.messagebox.showwarning(
                                 title='Error', message='No existe un camino entre origen y destino')
@@ -194,13 +194,15 @@ def main():
 
     pygame.quit()
 
+
 def esCorrecto(fila, columna, origen, mapa) -> bool:
     correcto: bool = False
-    
+
     if(fila != origen.getFila() or columna != origen.getCol()) and \
-        bueno(mapa, Casilla(fila, columna)):
-            correcto = True
+            bueno(mapa, Casilla(fila, columna)):
+        correcto = True
     return correcto
+
 
 def vecinos(nodo: Nodo, mapa: Mapa) -> List:
     vecinos: List = []
@@ -211,13 +213,15 @@ def vecinos(nodo: Nodo, mapa: Mapa) -> List:
 
     return vecinos
 
+
 def reconstruyeCamino(best: Nodo, caminos):
     coste = best.getF()
-    
+
     while(best.getPadre()):
         caminos[best.casilla.getFila()][best.casilla.getCol()] = 'X'
         best = best.getPadre()
     return coste
+
 
 def iniciaEstados(mapi):
     estados = []
@@ -227,102 +231,100 @@ def iniciaEstados(mapi):
             estados[i].append(-1)
     return estados
 
+
 def camino_expandido(camino, mapi):
     for i in range(mapi.alto):
         for j in range(mapi.ancho):
-            print(camino[i][j], end = " ")
+            print(camino[i][j], end=" ")
         print()
 
-def mejorNodo(listaFrontera):
-    pos = 0
 
-    for i in range(1, len(listaFrontera)):
-        print("pos -> ", listaFrontera[i], " f -> ", listaFrontera[i].f)
-        if listaFrontera[i].getF() <= listaFrontera[pos].getF():
-            pos = i
-    return listaFrontera[pos]
-
-def correctInsertion(lista: List[Nodo], hijo: Nodo):
+def printList(lista):
+    print("ENTRA")
     for i in lista:
-        if hijo.f <= i.f:
-            return lista.index(i)
+        print(i, " f -> ", i.f)
 
 
-def indiceCorrecto(list, node: Nodo):
-    index = -1
-    for i in range(list):
-        if list[i].f >= node.f:
-            index = i
-            break      
-    return index
-    
 def aEstrella(mapi: Mapa, origen: Casilla, destino: Casilla, caminos) -> float:
     coste_total: float = -1
+
     listaFrontera: List[Nodo] = []
     listaInterior: List[Nodo] = []
-
     estados = iniciaEstados(mapi)
 
     nodoInicial: Nodo = Nodo(origen)
     nodoMeta: Nodo = Nodo(destino)
-
     listaFrontera.append(nodoInicial)
-
 
     orden = 0
     while listaFrontera:
-        #Cogemos el mejor nodo de la lista Frontera
-        best = mejorNodo(listaFrontera)
-        print("pos -> ", best, " f -> ", best.f)
-        #best: Nodo = listaFrontera[0] #min(listaFrontera, key=lambda nodo: nodo.f)
-        print("h -> ", best.h)
+        # Cogemos el mejor nodo de la lista Frontera
+        best: Nodo = listaFrontera[0]
+        printList(listaFrontera)
         estados[best.casilla.fila][best.casilla.col] = orden
         orden += 1
 
         """Hemos llegado a la meta"""
         if(best == nodoMeta):
+            print("f -> ", best.f)
+            print("g -> ", best.g)
+            print("h -> ", best.h)
             coste_total = reconstruyeCamino(best, caminos)
             camino_expandido(estados, mapi)
-            break
-        
-        """Expandimos nodo"""
-        listaInterior.append(best)
-        listaFrontera.remove(best)
 
-        """Vemos los hijos validos"""
-        for hijo in vecinos(best, mapi):
-            g_m = best.g + costeCelda(hijo, best)
-            if hijo not in listaInterior:
-                if hijo not in listaFrontera:
-                    hijo.padre = best
-                    hijo.g = g_m
-                    hijo.h = hijo.distanciaManhattan(nodoMeta)
-                    hijo.f = hijo.g + hijo.h
-                    listaFrontera.append(hijo)
-                    listaFrontera.sort(key=lambda nodo: nodo.f)
-                elif g_m < hijo.g:
-                    hijo.padre = best
-                    hijo.g = g_m
-                    hijo.h = hijo.distanciaManhattan(nodoMeta)
-                    hijo.f = hijo.g + hijo.h
-                    
+            print("Nodos explorados: ", len(listaInterior))
+            break
+        else:
+            """Expandimos nodo"""
+            listaInterior.append(best)
+            listaFrontera.remove(best)
+
+            """Vemos los hijos validos"""
+            for hijo in vecinos(best, mapi):
+                if hijo not in listaInterior:
+                    g_m = best.g + costeCelda(hijo, best)
+                    if hijo not in listaFrontera:
+                        hijo.g = g_m
+                        hijo.h = hijo.distanciaDiagonal(nodoMeta)
+                        hijo.padre = best
+
+                        #hijo.h = hijo.distanciaManhattan(nodoMeta)
+                        hijo.f = hijo.g + hijo.h
+                        listaFrontera.append(hijo)
+                        listaFrontera.sort(key=lambda nodo: nodo.f)
+                    elif g_m < hijo.g:
+                        print("ENTRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                        pos = listaFrontera.index(hijo)
+                        print("Pos -> ", pos)
+                        listaFrontera.remove(listaFrontera[pos])
+
+                        hijo.padre = best
+                        hijo.g = g_m
+                        hijo.h = hijo.distanciaDiagonal(nodoMeta)
+                        #hijo.h = hijo.distanciaManhattan(nodoMeta)
+                        hijo.f = hijo.g + hijo.h
+                        listaFrontera.append(hijo)
+
     return coste_total
 
+
 def costeCelda(vecino: Nodo, best: Nodo) -> float:
-    coste: float = 0.0
-    hijo: Casilla = vecino - best
-    
-    #verticales = [Casilla(-1,0), Casilla(0,-1), Casilla(0,1), Casilla(1,0)]
-    #diagonales = [Casilla(-1,-1), Casilla(-1,1), Casilla(1,-1), Casilla(1,1)]
-    
-    verticales = [Casilla(1,0), Casilla(0,1)]
-    diagonal = Casilla(1,1)
-      
-    if hijo in verticales:
-        coste = 1.0
-    elif hijo == diagonal:
-        coste = 1.5
-    return coste
+    res: Casilla = vecino - best
+
+    verticales = [Casilla(1, 0), Casilla(0, 1)]
+    diagonal = Casilla(1, 1)
+
+    x = abs(best.casilla.fila - vecino.casilla.fila)
+    y = abs(best.casilla.col - vecino.casilla.col)
+    if x + y == 1:
+        return 1.0
+    else:
+        return 1.5
+    # if res in verticales:
+    #    return 1.0
+    # elif res == diagonal:
+    #    return 1.5
+
 
 # ---------------------------------------------------------------------
 if __name__ == "__main__":
