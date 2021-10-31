@@ -29,9 +29,6 @@ def muestraCaminoExpandido(cam, mapi):
             print(cam[i][j], end = " ")
         print()
 
-def printLista(list):
-    for nodo in list:
-        print(nodo)
 
 
 def aEstrella(mapi, origen, destino, camino):
@@ -58,14 +55,6 @@ def aEstrella(mapi, origen, destino, camino):
         #Sacamos el mejor nodo de la lista frontera
         n = mejorEstado(listaFrontera)
         
-        print("Lista frontera")
-        printLista(listaFrontera)
-
-        print("Lista Interior")
-        printLista(listaInterior)
-
-        print("\n")
-
         fil = n.getCasilla().getFila()
         col = n.getCasilla().getCol()
         expandedPath[fil][col] = posOrden
@@ -86,8 +75,7 @@ def aEstrella(mapi, origen, destino, camino):
 
             #Caminos
             muestraCaminoReconstruido(n, camino)
-            #muestraCaminoExpandido(expandedPath, mapi)
-            print
+            muestraCaminoExpandido(expandedPath, mapi)
 
             return res
         else:
@@ -100,19 +88,13 @@ def aEstrella(mapi, origen, destino, camino):
                     g_m = n.getG() + costeDesplazamiento(n, m)
                     if m not in listaFrontera:
                         m.setG(g_m)
-                        #m.setH(0)
-                        #m.setH(manhattanHeuristic(m, estadoFinal))
-                        #m.setH(euclideaHeuristic(m, estadoFinal))
-                        m.setH(manhattanHeuristic(m, estadoFinal))
+                        m.setH(euclideaHeuristic(m, estadoFinal))
                         m.setF(m.getG() + m.getH())
                         m.setPadre(n)
                         listaFrontera.append(m)
                     elif g_m < m.getG():
                         m.setG(g_m)
-                        #m.setH(0)
-                        #m.setH(manhattanHeuristic(m, estadoFinal))
-                        #m.setH(euclideaHeuristic(m, estadoFinal))
-                        m.setH(manhattanHeuristic(m, estadoFinal))
+                        m.setH(euclideaHeuristic(m, estadoFinal))
                         m.setF(m.getG() + m.getH())
                         m.setPadre(n)
     return -1
