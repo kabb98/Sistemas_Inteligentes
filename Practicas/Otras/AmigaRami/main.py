@@ -73,7 +73,7 @@ def main():
     reloj=pygame.time.Clock()
 
     if not file:     #si no se elige un fichero coge el mapa por defecto
-        file='mapa.txt'
+        file='mapa_custom1.txt'
 
     mapi=Mapa(file)
     origen=mapi.getOrigen()
@@ -122,6 +122,8 @@ def main():
                         destino=casi
                         camino=inic(mapi)
                         # llamar al A*
+                        trazaFic = 'traza.txt'
+                        sys.stdout = open(trazaFic, "w")
                         coste=aEstrella(mapi, origen, destino, camino)
                         if coste==-1:
                             tkinter.messagebox.showwarning(title='Error', message='No existe un camino entre origen y destino')

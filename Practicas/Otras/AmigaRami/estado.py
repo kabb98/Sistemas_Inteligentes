@@ -35,3 +35,7 @@ class Estado():
 
     def __eq__(self, other):
         return self.casilla == other.casilla
+
+    def __repr__(self):
+        return "(" + str(self.casilla.fila) + ", " + str(self.casilla.col) + ")" + \
+            "[f: " + str(self.f) + ", g: " + str(self.g) + ", h: " + str(self.h) + "]"

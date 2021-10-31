@@ -2,6 +2,8 @@
 from estado import *
 from casilla import *
 import time
+import math
+
 
 def mejorEstado(listaFrontera):
     pos = 0
@@ -11,7 +13,7 @@ def mejorEstado(listaFrontera):
             pos = i
     return listaFrontera[pos]
 
-def createExpPath(mapi):
+def creaMatrizExpandidos(mapi):
     cam = []
     for i in range(mapi.alto):
         cam.append([])
@@ -27,6 +29,10 @@ def muestraCaminoExpandido(cam, mapi):
             print(cam[i][j], end = " ")
         print()
 
+def printLista(list):
+    for nodo in list:
+        print(nodo)
+
 
 def aEstrella(mapi, origen, destino, camino):
     #Comenzamos a contar el tiempo
@@ -35,7 +41,7 @@ def aEstrella(mapi, origen, destino, camino):
     #Estructuras de datos
     listaFrontera = []
     listaInterior = []
-    expandedPath = createExpPath(mapi)
+    expandedPath = creaMatrizExpandidos(mapi)
     
     #Nodos de los que sabemos su posicion
     estadoInicial = Estado(origen)
@@ -52,6 +58,14 @@ def aEstrella(mapi, origen, destino, camino):
         #Sacamos el mejor nodo de la lista frontera
         n = mejorEstado(listaFrontera)
         
+        print("Lista frontera")
+        printLista(listaFrontera)
+
+        print("Lista Interior")
+        printLista(listaInterior)
+
+        print("\n")
+
         fil = n.getCasilla().getFila()
         col = n.getCasilla().getCol()
         expandedPath[fil][col] = posOrden
@@ -68,12 +82,11 @@ def aEstrella(mapi, origen, destino, camino):
             #Estadisticas
             print("Coste: ", res)
             print("Nodos explorados: ", len(listaInterior))
-            #g = float("{:.5f}".format(fin - inicio))
             print("Tiempo de ejecución: ", fin - inicio)
 
             #Caminos
             muestraCaminoReconstruido(n, camino)
-            muestraCaminoExpandido(expandedPath, mapi)
+            #muestraCaminoExpandido(expandedPath, mapi)
             print
 
             return res
@@ -87,13 +100,19 @@ def aEstrella(mapi, origen, destino, camino):
                     g_m = n.getG() + costeDesplazamiento(n, m)
                     if m not in listaFrontera:
                         m.setG(g_m)
-                        m.setH(0)
+                        #m.setH(0)
+                        #m.setH(manhattanHeuristic(m, estadoFinal))
+                        #m.setH(euclideaHeuristic(m, estadoFinal))
+                        m.setH(manhattanHeuristic(m, estadoFinal))
                         m.setF(m.getG() + m.getH())
                         m.setPadre(n)
                         listaFrontera.append(m)
                     elif g_m < m.getG():
                         m.setG(g_m)
-                        m.setH(0)
+                        #m.setH(0)
+                        #m.setH(manhattanHeuristic(m, estadoFinal))
+                        #m.setH(euclideaHeuristic(m, estadoFinal))
+                        m.setH(manhattanHeuristic(m, estadoFinal))
                         m.setF(m.getG() + m.getH())
                         m.setPadre(n)
     return -1
@@ -116,11 +135,12 @@ def muestraCaminoReconstruido(n, camino):
         camino[n.getCasilla().getFila()][n.getCasilla().getCol()] = 'X'
         n = n.getPadre()
     
-    print("Camino")
+    """print("Camino")
     for i in range(len(camino)):
         for j in range(len(camino[i])):
             print(camino[i][j], end=" ")
         print()
+    """
 
 #Saca los vecinos adyacentes a n que sean correctos
 def vecinosAdyacentes(mapa, n):
@@ -137,19 +157,33 @@ def vecinosAdyacentes(mapa, n):
                 adyacentes.append(Estado(pos))
     return adyacentes
 
+
+
+# ---------------------------------------- HEURISTICAS ---------------------------------------- 
+
+#H = 0
+def basicHeuristic(actual, meta):
+    return 0
+
 #Heuristica Manhattan
 def manhattanHeuristic(actual, meta):
-    res = abs(meta.getCasilla().getFila() - actual.getCasilla().getFila()) + \
-        abs(meta.getCasilla().getCol() - actual.getCasilla().getCol())
-    return res
+    x = abs(meta.getCasilla().getFila() - actual.getCasilla().getFila())
+    y = abs(meta.getCasilla().getCol() - actual.getCasilla().getCol())
+    return  x + y
 
 #Heuristica Euclidea
 def euclideaHeuristic(actual, meta):
-    pass
+    x = meta.getCasilla().getFila() - actual.getCasilla().getFila()
+    y = meta.getCasilla().getCol() - actual.getCasilla().getCol()
+
+    dist = math.sqrt(x**2 + y**2)
+    return dist
 
 #Heuristica Chevyshev
 def chevyshevHeuristic(actual, meta):
-    pass
+    x = abs(meta.getCasilla().getFila() - actual.getCasilla().getFila())
+    y = abs(meta.getCasilla().getCol() - actual.getCasilla().getCol())
+    return max(x, y)
 
 #Heuristica Cuadratica
 def cuadraticHeuritic(actual, meta):
