@@ -35,12 +35,9 @@ def aplicar_clasificador_debil(c_d, imagen):
 
 def obtener_error(clasificador, X, Y, D):
     error = 0.0
-    contador = 0
-    for img in X:
-        res = aplicar_clasificador_debil(clasificador, img)
-        if res != Y[contador]:
-            error = error + D[contador]
-        contador = contador + 1
+    for i, img in enumerate(X):
+        if aplicar_clasificador_debil(clasificador, img) != Y[i]:
+            error = error + D[i]
     
     clasificador.error = error
     return error

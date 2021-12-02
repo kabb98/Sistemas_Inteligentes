@@ -1,0 +1,13 @@
+Entrenamiento, Validacion y Test
+
+Entrenamiento: Para entrenar la IA
+Validación: Es un subconjunto del conjunto de entrenamiento, es decir, partimos el conjunto de entrenamiento en dos.
+El entrenamiento saldrá con una tasa de error, lo mismo para la validación.
+
+Test: Es un conjunto que no debemos tocar hasta que sea el final. Es un conjunto de datos que el algoritmo nunca ha visto.
+
+El error más importante es el de validación.
+
+Hay que repartir el conjunto de entrenamiento y el de validación.
+
+Del 80% del entrenamiento, 50% 0's 50 otros numeros.

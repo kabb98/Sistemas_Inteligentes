@@ -10,7 +10,7 @@ def entrenar(X, Y, T, A):
     dimension_datos = 784
     
     for t in range(0, T):
-        menorError = 2
+        menorError = 1.1
         
         #Entrenar ht
         best = None
@@ -46,7 +46,7 @@ def entrenar(X, Y, T, A):
         for i in range(0, N):
             Dt[i] = Dt[i] / Z
 
-    for idx, fk in enumerate(clasificadores_debiles):
-        print("Weak Learner " , idx, ": ", fk)
+    #for idx, fk in enumerate(clasificadores_debiles):
+    #    print("Weak Learner " , idx, ": ", fk)
     
     return (clasificadores_debiles, alphas)

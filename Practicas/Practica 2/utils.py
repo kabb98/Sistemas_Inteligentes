@@ -16,6 +16,7 @@ def crea_conjunto_entrenamiento(X, Y, item):
     
     #Tamaño 600 de los conjuntos
     tam = len(X)//100
+    print("Tam: ", tam)
     
     for i in range(0, tam):
         if Y[i] == item:
