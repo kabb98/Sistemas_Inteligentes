@@ -1,0 +1,32 @@
+Diapositiva 1
+Buenos dias, vamos a realizar la presentacion del trabajo de la asignatura.
+El grupo esta formado por Jorge Bello, Jesus Plaza, Jorge Vazquez, Jorge Sanchez y yo,
+Kenny Berrones.
+
+
+Diapositiva 2 y 3
+Nuestra propuesta para la asignatura es un Hogar Inteligente adaptado a 
+personas con discapacidad visual.
+Algunos de los puntos han parecido más interesantes son:
+- La seguridad
+- La comodidad
+- La eficiencia energetica
+- Control de las comunicaciones
+
+
+Ahora mi compañero Jesus hablara sobre las funcionalidades.
+
+
+Diapositiva 8
+Sobre lo que se refiere a las comunicaciones, algo que es muy relevante es que muestre 
+la informacion en tiempo real, esto es muy util para tener un control del residente.
+
+Por un lado tenemos diagnostico en tiempo real de la casa, esto quiere decir
+que podremos ver distintos aspectos de la casa en tiempo real, como puede ser 
+la temperatura, si está se encuentra cerrada, entre otros.
+
+Y relacionado con lo anterior, también se realizara avisos 
+a una persona de confianza cuando el residente salga del hogar, 
+y tambien llevar un registro de los visitantes
+
+Ahora mi compañero Jorge hablará sobre los articulos que hemos buscado.
