@@ -1,7 +1,6 @@
 import random as rd
 
-#Dimension con la que vamos a trabajar. En nuestro caso 28*28
-
+#Clase clasificador débil
 class clasificador_debil():
     def __init__(self, pixel, umbral, dir):
         self.pixel = pixel
@@ -25,19 +24,18 @@ def aplicar_clasificador_debil(c_d, imagen):
     #Si la direccion es positiva, miramos en la parte positiva del plano
     if c_d.dir == 1:
         if imagen[c_d.pixel] > c_d.umbral:
-            return True
+            return 1
     elif c_d.dir == -1:
         if imagen[c_d.pixel] < c_d.umbral:
-            return True
+            return 1
 
-    return False
-
+    return -1
 
 def obtener_error(clasificador, X, Y, D):
     error = 0.0
     for i, img in enumerate(X):
         if aplicar_clasificador_debil(clasificador, img) != Y[i]:
-            error = error + D[i]
+            error += D[i]
     
     clasificador.error = error
     return error

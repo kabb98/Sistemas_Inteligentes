@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+
 import numpy as np
 def mostrar_imagen(imagen):
     plt.figure()
@@ -7,28 +8,52 @@ def mostrar_imagen(imagen):
 
 def adaptar_conjuntos(mnist_X, mnist_Y):
     X = mnist_X.reshape(60000, 784)
-    print(X.shape)
     return (X, mnist_Y)
 
-def crea_conjunto_entrenamiento(X, Y, item):
-    conjuntoX = []
-    conjuntoY = []
+def split_train_validation_set(X, Y):
+    #Usaremos 80% para train, 20% para validation
+    #Luego sacar el 50% de num y otro 50% de aleatorio -> Tanto para train como validation
     
-    #Tamaño 600 de los conjuntos
-    tam = len(X)//100
-    print("Tam: ", tam)
-    
-    for i in range(0, tam):
-        if Y[i] == item:
-            conjuntoX.append(X[i])
-            conjuntoY.append(True)
-        elif Y[i] != item:
-            conjuntoX.append(X[i])
-            conjuntoY.append(False)
+    print(X.shape)
+    N = int(0.8*len(X))
+    X_Train = X[0:N]
+    X_Validation = X[N:len(X)]
 
-    return (conjuntoX, conjuntoY)
-            
-            
+    Y_Train = Y[0:N]
+    Y_Validation = Y[N:len(X)]
+
+    
+
+    return (X_Train, X_Validation, Y_Train, Y_Validation)
+
+def creaConjunto(X, Y, num):
+    filtro = (Y == num)
+    zeros = np.count_nonzero(filtro)
+    print("Zeros: ", zeros*2)
+    indices = np.where(filtro)
+    filtroDistinto = np.invert(filtro)
+    
+    Y_Izq = Y[indices]
+    Y_Der = Y[np.where(filtroDistinto)]
+    Y_Der = Y_Der[:zeros]
+    
+    X_Izq = X[indices]
+    X_Der = X[np.where(filtroDistinto)]
+    X_Der = X_Der[:zeros]
+
+    
+    X_res = np.concatenate((X_Izq, X_Der), axis=0)
+    Y_res = np.concatenate((Y_Izq, Y_Der), axis=0)
+    return (X_res, Y_res)
+    
+    
+def addaptForTraining(Y, num):
+    for n in Y:
+        if n == num:
+            n = 1
+        else:
+            n = -1
+    return Y
 
 def plot_arrays(X, Y, title):
     plt.title(title)
